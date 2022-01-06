@@ -11,7 +11,7 @@ app.use(express.json()); // req.body
 // Third Party Middleware
 app.use(cors());
 
-const port = process.env.PORT;
+const port = process.env.PORT || 3001;
 app.listen(port, () => {
   // eslint-disable-next-line no-console
   console.log(`Server is running on port ${port}`);
