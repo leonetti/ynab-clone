@@ -1,11 +1,21 @@
 const router = require('express').Router();
 const bcrypt = require('bcrypt');
-const jwtGenerator = require('../utils/jwtGenerator');
-
 const db = require('../db');
 
-// Register a User
-router.post('/register', async (req, res) => {
+// Utilities
+const jwtGenerator = require('../utils/jwtGenerator');
+
+// Middleware
+const registerValidation = require('../middleware/registerValidation');
+const loginValidation = require('../middleware/loginValidation');
+const authorization = require('../middleware/authorization');
+
+/*
+***************
+REGISTER A USER
+***************
+*/
+router.post('/register', registerValidation, async (req, res) => {
   try {
     // 1. Destructure req.body (name, email, password)
     const { name, email, password } = req.body;
@@ -39,14 +49,16 @@ router.post('/register', async (req, res) => {
     const token = jwtGenerator(newUser.rows[0].user_id);
     res.status(200).json({ token });
   } catch (error) {
-    // eslint-disable-next-line no-console
-    console.log(error.message);
     res.status(500).send('Server Error');
   }
 });
 
-// Login a User
-router.post('/login', async (req, res) => {
+/*
+************
+LOGIN A USER
+************
+*/
+router.post('/login', loginValidation, async (req, res) => {
   try {
     // 1. Destructe req.body
     const { email, password } = req.body;
@@ -80,8 +92,19 @@ router.post('/login', async (req, res) => {
     const token = jwtGenerator(user.rows[0].user_id);
     res.status(200).json({ token });
   } catch (error) {
-    // eslint-disable-next-line no-console
-    console.log(error.message);
+    res.status(500).send('Server Error');
+  }
+});
+
+/*
+*************
+VERIFY A USER
+*************
+*/
+router.get('/verify', authorization, async (req, res) => {
+  try {
+    res.status(200).json(true);
+  } catch (error) {
     res.status(500).send('Server Error');
   }
 });
