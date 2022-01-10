@@ -6,7 +6,9 @@ const cors = require('cors');
 const app = express();
 
 /*
+**********
 MIDDLEWARE
+**********
 */
 
 // Express Middleware
@@ -16,7 +18,9 @@ app.use(express.json()); // req.body
 app.use(cors());
 
 /*
+******
 ROUTES
+******
 */
 
 // Register and Login Routes

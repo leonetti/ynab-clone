@@ -10,7 +10,7 @@ router.post('/register', async (req, res) => {
     // 1. Destructure req.body (name, email, password)
     const { name, email, password } = req.body;
 
-    // 2. Check if user exists (if user exists throw error)
+    // 2. Check if user exists (if user exists - throw error)
     const user = await db.query(
       'SELECT * FROM users WHERE user_email = $1',
       [email],
@@ -37,6 +37,47 @@ router.post('/register', async (req, res) => {
 
     // 5. Generate our JWT Token
     const token = jwtGenerator(newUser.rows[0].user_id);
+    res.status(200).json({ token });
+  } catch (error) {
+    // eslint-disable-next-line no-console
+    console.log(error.message);
+    res.status(500).send('Server Error');
+  }
+});
+
+// Login a User
+router.post('/login', async (req, res) => {
+  try {
+    // 1. Destructe req.body
+    const { email, password } = req.body;
+
+    // 2. Check if user exists (if user does not exist - throw error)
+    const user = await db.query(
+      'SELECT * FROM users WHERE user_email = $1',
+      [email],
+    );
+
+    if (user.rows.length === 0) {
+      // 401 Unauthenticated - email does not exist
+      res.status(401).json({
+        message: 'Email is Incorrect',
+      });
+      return;
+    }
+
+    // 3. Check if incoming password is same as database password
+    const validPassword = await bcrypt.compare(password, user.rows[0].user_password);
+
+    if (!validPassword) {
+      // 401 Unauthenticated - wrong password
+      res.status(401).json({
+        message: 'Password is Incorrect',
+      });
+      return;
+    }
+
+    // 4. Give user JWT Token
+    const token = jwtGenerator(user.rows[0].user_id);
     res.status(200).json({ token });
   } catch (error) {
     // eslint-disable-next-line no-console
