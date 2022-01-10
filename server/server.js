@@ -12,7 +12,7 @@ MIDDLEWARE
 */
 
 // Express Middleware
-app.use(express.json()); // req.body
+app.use(express.json()); // gives access to req.body
 
 // Third Party Middleware
 app.use(cors());
@@ -25,6 +25,9 @@ ROUTES
 
 // Register and Login Routes
 app.use('/api/v1/auth', require('./routes/jwtAuth'));
+
+// Dashboard
+app.use('/api/v1/dashboard', require('./routes/dashboard'));
 
 const port = process.env.PORT || 3001;
 app.listen(port, () => {

@@ -47,9 +47,11 @@ router.post('/register', registerValidation, async (req, res) => {
 
     // 5. Generate our JWT Token
     const token = jwtGenerator(newUser.rows[0].user_id);
-    res.status(200).json({ token });
+    res.status(200).json({
+      data: { token },
+    });
   } catch (error) {
-    res.status(500).send('Server Error');
+    res.status(500).json({ message: 'Server Error' });
   }
 });
 
@@ -90,9 +92,11 @@ router.post('/login', loginValidation, async (req, res) => {
 
     // 4. Give user JWT Token
     const token = jwtGenerator(user.rows[0].user_id);
-    res.status(200).json({ token });
+    res.status(200).json({
+      data: { token },
+    });
   } catch (error) {
-    res.status(500).send('Server Error');
+    res.status(500).json({ message: 'Server Error' });
   }
 });
 
@@ -103,9 +107,11 @@ VERIFY A USER
 */
 router.get('/verify', authorization, async (req, res) => {
   try {
-    res.status(200).json(true);
+    res.status(200).json({
+      data: { authorized: true },
+    });
   } catch (error) {
-    res.status(500).send('Server Error');
+    res.status(500).json({ message: 'Server Error' });
   }
 });
 
